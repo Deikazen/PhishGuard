@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard | Deteksi Link Berbahaya dalam Sekejap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 100px 0;
+        }
+
+        .card {
+            border: none;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        #resultBox {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-shield-lock-fill me-2"></i>PhishGuard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link" href="#fitur">Fitur</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#cara-kerja">Cara Kerja</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal"
+                            data-bs-target="#feedbackModal">
+                            <i class="bi bi-chat-text me-1"></i>Beri Feedback
+                        </a></li>
+                    <li class="nav-item"><a class="btn btn-primary ms-lg-3" href="#">Mulai Deteksi</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section text-center text-white">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Jangan Jadi Korban <span class="text-primary">Phishing</span> Selanjutnya
+            </h1>
+            <p class="lead mb-5 text-secondary">Lindungi data pribadi Anda dari website palsu menggunakan teknologi AI
+                deteksi dini yang akurat.</p>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="input-group input-group-lg shadow">
+                        <input type="text" id="urlInput" class="form-control"
+                            placeholder="Masukkan URL yang mencurigakan di sini..."
+                            onkeydown="if(event.key==='Enter') prosesLink()">
+                        <button class="btn btn-primary px-4" type="button" id="checkBtn" onclick="prosesLink()">
+                            <i class="bi bi-search me-1"></i> Periksa Link
+                        </button>
+                    </div>
+
+                    <div id="resultBox" class="mt-4">
+                        <div id="resultCard" class="rounded-3 p-4 text-white d-flex align-items-center gap-3 shadow">
+                            <div id="resultIcon" class="fs-1 flex-shrink-0"></div>
+                            <div class="text-start flex-grow-1">
+                                <div id="resultLabel" class="small text-uppercase fw-semibold opacity-75 mb-1"></div>
+                                <div id="resultStatus" class="fs-5 fw-bold"></div>
+                                <div id="resultUrl" class="small opacity-75 text-break"></div>
+                            </div>
+                            <div id="resultBadge"
+                                class="text-center flex-shrink-0 bg-white bg-opacity-25 rounded-3 px-3 py-2">
+                                <div id="resultPct" class="fs-4 fw-bold lh-1"></div>
+                                <div id="resultPctLabel" class="small text-uppercase opacity-75"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white border-bottom-0">
+                    <h5 class="modal-title" id="feedbackModalLabel">
+                        <i class="bi bi-envelope-paper me-2"></i>Kirim Feedback
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">Pesan ini dikirim secara anonim. Kami tidak melacak nama, email,
+                        atau data pribadi Anda.</p>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="feedbackMessage" rows="4"
+                            placeholder="Tulis masukan, laporan bug, atau saran pengembangan di sini..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btnKirimFeedback" onclick="kirimFeedback()">
+                        Kirim Pesan <i class="bi bi-send ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="fitur" class="py-5">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-5">Mengapa Memilih PhishGuard?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 p-4 shadow-sm">
+                        <i class="bi bi-cpu-fill fs-1 text-primary mb-3"></i>
+                        <h4>Analisis AI</h4>
+                        <p class="text-muted">Menggunakan algoritma Machine Learning untuk mendeteksi pola website
+                            penipuan secara real-time.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 p-4 shadow-sm">
+                        <i class="bi bi-list-check fs-1 text-primary mb-3"></i>
+                        <h4>Database Global</h4>
+                        <p class="text-muted">Tersambung dengan jutaan daftar hitam URL berbahaya yang diperbarui setiap
+                            menit.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 p-4 shadow-sm">
+                        <i class="bi bi-lightning-auto fs-1 text-primary mb-3"></i>
+                        <h4>Hasil Instan</h4>
+                        <p class="text-muted">Hanya butuh kurang dari 2 detik untuk mengetahui apakah sebuah link aman
+                            atau berbahaya.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cara-kerja" class="py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="fw-bold mb-4">Cara Kerja Kami</h2>
+                    <div class="d-flex mb-3">
+                        <div class="me-3 fs-3 fw-bold text-primary">01</div>
+                        <div>
+                            <h5>Salin &amp; Tempel URL</h5>
+                            <p>Ambil link yang Anda terima dari email, SMS, atau pesan WhatsApp.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3 fs-3 fw-bold text-primary">02</div>
+                        <div>
+                            <h5>Analisis Mendalam</h5>
+                            <p>Sistem kami membedah struktur domain, sertifikat SSL, dan konten halaman tersebut.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3 fs-3 fw-bold text-primary">03</div>
+                        <div>
+                            <h5>Laporan Keamanan</h5>
+                            <p>Dapatkan skor risiko dan peringatan jika ditemukan tanda-tanda penipuan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="bg-secondary rounded shadow-lg p-5 text-white">
+                        <i class="bi bi-shield-check" style="font-size: 10rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row text-center g-4 row-cols-2 row-cols-md-4 justify-content-center">
+
+                <div class="col">
+                    <a href="https://github.com/Deikazen" class="text-white text-decoration-none">
+                        <i class="bi bi-github" style="font-size: 4rem;"></i>
+                        <p class="mt-2 fw-bold">Deikazen</p>
+                    </a>
+                </div>
+
+                <div class="col">
+                    <a href="https://www.linkedin.com/in/satriara/" class="text-white text-decoration-none">
+                        <i class="bi bi-linkedin" style="font-size: 4rem;"></i>
+                        <p class="mt-2 fw-bold">Satriara</p>
+                    </a>
+                </div>
+
+                <div class="col">
+                    <a href="https://www.instagram.com/_satriara/" class="text-white text-decoration-none">
+                        <i class="bi bi-instagram" style="font-size: 4rem;"></i>
+                        <p class="mt-2 fw-bold">@_satriara</p>
+                    </a>
+                </div>
+
+                <div class="col">
+                    <a href="mailto:mfsmfsmfs35@gmail.com" class="text-white text-decoration-none">
+                        <i class="bi bi-envelope-at" style="font-size: 4rem;"></i>
+                        <p class="mt-2 fw-bold">mfsmfsmfs35@gmail.com</p>
+                    </a>
+                </div>
+
+            </div>
+
+            <hr class="mt-5 mb-4 opacity-25">
+
+            <div class="row">
+                <div class="col text-center">
+                    <p class="mb-0 small text-secondary">
+                        &copy; 2026 Satriara. All Rights Reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const STATE = {
+            loading: { bg: 'bg-primary', icon: '', label: 'Memproses', status: 'Sedang menganalisis URL...', badge: false },
+            safe: { bg: 'bg-success', icon: '<i class="bi bi-shield-check-fill"></i>', label: 'Hasil Deteksi', status: '✅ AMAN — Legitimate', badge: true, pctLabel: 'Skor Aman' },
+            danger: { bg: 'bg-danger', icon: '<i class="bi bi-exclamation-triangle-fill"></i>', label: 'Hasil Deteksi', status: '⚠️ BAHAYA — Phishing', badge: true, pctLabel: 'Skor Risiko' },
+            error: { bg: 'bg-secondary', icon: '<i class="bi bi-wifi-off"></i>', label: 'Kesalahan', status: 'Gagal terhubung ke server', badge: false }
+        };
+
+        function showResult(type, url, persen) {
+            const s = STATE[type];
+            const card = document.getElementById("resultCard");
+
+            card.className = `rounded-3 p-4 text-white d-flex align-items-center gap-3 shadow ${s.bg}`;
+
+            document.getElementById("resultIcon").innerHTML = type === 'loading'
+                ? `<span class="spinner-border" role="status" style="width:2rem;height:2rem;"></span>`
+                : s.icon;
+            document.getElementById("resultLabel").textContent = s.label;
+            document.getElementById("resultStatus").textContent = s.status;
+            document.getElementById("resultUrl").textContent = url;
+
+            const badge = document.getElementById("resultBadge");
+            if (s.badge && persen !== null) {
+                badge.style.display = "block";
+                document.getElementById("resultPct").textContent = persen + "%";
+                document.getElementById("resultPctLabel").textContent = s.pctLabel;
+            } else {
+                badge.style.display = "none";
+            }
+
+            const box = document.getElementById("resultBox");
+            box.style.display = "none";
+            void box.offsetWidth;
+            box.style.display = "block";
+        }
+
+        async function prosesLink() {
+            const url = document.getElementById("urlInput").value.trim();
+            if (!url) { alert("Masukkan link terlebih dahulu!"); return; }
+
+            const btn = document.getElementById("checkBtn");
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span> Memeriksa...`;
+            showResult('loading', url, null);
+
+            try {
+                const res = await fetch("http://127.0.0.1:5000/api/predict", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                const persen = (data.probability * 100).toFixed(1);
+                showResult(data.prediction === 1 ? 'danger' : 'safe', url, persen);
+            } catch {
+                showResult('error', 'Pastikan API berjalan di http://127.0.0.1:5000', null);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="bi bi-search me-1"></i> Periksa Link`;
+            }
+        }
+
+        // Fungsi baru untuk mengirim feedback
+        async function kirimFeedback() {
+            const inputPesan = document.getElementById("feedbackMessage");
+            const pesan = inputPesan.value.trim();
+
+            if (!pesan) {
+                alert("Pesan feedback tidak boleh kosong!");
+                return;
+            }
+
+            const btn = document.getElementById("btnKirimFeedback");
+            const teksAsli = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span> Mengirim...`;
+
+            try {
+
+                const res = await fetch("http://127.0.0.1:5000/api/feedback", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pesan })
+                });
+                if (!res.ok) throw new Error();
+
+
+
+
+                alert("Terima kasih! Feedback anonim Anda telah terkirim.");
+
+                // Reset form dan tutup modal
+                inputPesan.value = "";
+                const modalEl = document.getElementById('feedbackModal');
+                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.hide();
+
+            } catch (error) {
+                alert("Gagal mengirim feedback. Pastikan server berjalan.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = teksAsli;
+            }
+        }
+    </script>
+</body>
+
+</html>
