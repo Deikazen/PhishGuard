@@ -1,18 +1,24 @@
-from app.services.feedback_service import init_csv, save_feedback_to_csv
 from flask import request, jsonify
+from app.services.feedback_service import save_feedback_to_sheets
 
 def feedback():
-    init_csv()
-    dataPesan = request.get_json()
-    pesan = dataPesan.get("pesan")
-   
+    """Controller untuk endpoint /api/feedback"""
+    try:
+        # 1. Ambil data dari request frontend
+        data = request.get_json()
+        pesan = data.get('pesan')
+        
+        # 2. Validasi input
+        if not pesan or str(pesan).strip() == "":
+            return jsonify({"error": "Pesan tidak boleh kosong"}), 400
 
-    if not pesan:
-        return jsonify({"message": "Pesan tidak boleh kosong"}), 400
+        # 3. Lempar data ke Service untuk disimpan
+        save_feedback_to_sheets(pesan)
 
-    is_saved = save_feedback_to_csv(pesan)
+        # 4. Beri respon sukses ke frontend
+        return jsonify({"message": "Feedback berhasil dikirim!"}), 200
 
-    if is_saved:
-        return jsonify({"status": "success", "message": "Feedback berhasil disimpan"}), 200
-    else:
-        return jsonify({"status": "error", "message": "Gagal menyimpan feedback"}), 500
+    except Exception as e:
+        # Jika terjadi error di service atau controller, tangkap di sini
+        print(f"Feedback Controller Error: {e}")
+        return jsonify({"error": "Gagal mengirim feedback. Silakan coba lagi nanti."}), 500

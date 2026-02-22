@@ -6,3 +6,5 @@ scipy
 joblib
 pandas
 gunicorn
+python-dotenv
+gspread

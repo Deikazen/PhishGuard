@@ -295,7 +295,7 @@
             showResult('loading', url, null);
 
             try {
-                const res = await fetch("http://127.0.0.1:5000/api/predict", {
+                const res = await fetch("/api/predict", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url })
@@ -305,7 +305,7 @@
                 const persen = (data.probability * 100).toFixed(1);
                 showResult(data.prediction === 1 ? 'danger' : 'safe', url, persen);
             } catch {
-                showResult('error', 'Pastikan API berjalan di http://127.0.0.1:5000', null);
+                showResult('error', 'Pastikan API berjalan', null);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="bi bi-search me-1"></i> Periksa Link`;
@@ -329,7 +329,7 @@
 
             try {
 
-                const res = await fetch("http://127.0.0.1:5000/api/feedback", {
+                const res = await fetch("/api/feedback", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pesan })
