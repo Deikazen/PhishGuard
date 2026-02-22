@@ -5,3 +5,6 @@ numpy==1.26.4
 scipy
 joblib
 pandas
+gunicorn
+python-dotenv
+gspread
