@@ -44,4 +44,4 @@ def get_features(url):
     features['count_digits'] = sum(c.isdigit() for c in url)
     features['count_letters'] = sum(c.isalpha() for c in url)
 
-    return list(features.values())
+    return pd.Series(features)
