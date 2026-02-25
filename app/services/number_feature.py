@@ -1,5 +1,4 @@
 from urllib.parse import urlparse
-import pandas as pd
 
 def get_features(url):
     features = {}
@@ -44,4 +43,4 @@ def get_features(url):
     features['count_digits'] = sum(c.isdigit() for c in url)
     features['count_letters'] = sum(c.isalpha() for c in url)
 
-    return pd.Series(features)
+    return list(features.values())
