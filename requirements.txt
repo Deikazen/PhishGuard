@@ -1,9 +1,6 @@
 flask
-xgboost==2.0.3
-scikit-learn==1.3.2
 numpy==1.26.4
-scipy
-joblib
+onnxruntime
 gunicorn
 python-dotenv
 gspread
