@@ -1,0 +1,6 @@
+vapi/
+__pycache__/
+.git/
+convert_to_onnx.py
+*.pkl
+*.json
